@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How did we do? | First Call Public Adjusters</title>
+<style>
+  :root{
+    --navy:#0f2a4a;
+    --navy-deep:#081a30;
+    --gold:#c8973f;
+    --paper:#f6f4ef;
+    --ink:#1b2430;
+    --gray:#6b7280;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+
+  /* ============ GATE (rating + private feedback) — small centered card ============ */
+  #gate{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .card{
+    width:100%;
+    max-width:440px;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 40px rgba(15,42,74,0.12);
+    overflow:hidden;
+  }
+  .header{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+    color:#fff;
+    padding:32px 28px 26px;
+    text-align:center;
+  }
+  .header .brand{
+    font-size:13px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .header h1{
+    font-size:22px;
+    line-height:1.35;
+    margin:0;
+    font-weight:600;
+  }
+  .body{padding:32px 28px 36px;}
+  .step{display:none;}
+  .step.active{display:block;}
+  p.lead{text-align:center;color:var(--gray);font-size:15px;margin:0 0 26px;}
+  .stars{display:flex;justify-content:center;gap:10px;margin-bottom:8px;}
+  .star-btn{background:none;border:none;cursor:pointer;padding:4px;line-height:0;transition:transform 0.15s ease;}
+  .star-btn:hover{transform:scale(1.12);}
+  .star-btn svg{width:40px;height:40px;display:block;}
+  .star-btn path{fill:#e2e2e2;stroke:#cfcfcf;stroke-width:1;transition:fill 0.15s ease,stroke 0.15s ease;}
+  .star-btn.filled path{fill:var(--gold);stroke:var(--gold);}
+  .star-label{text-align:center;font-size:13px;color:var(--gray);min-height:18px;margin-top:4px;}
+  .icon-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+  .icon-circle.navy{background:#eaf0f6;}
+  .icon-circle svg{width:30px;height:30px;}
+  h2.step-title{text-align:center;font-size:18px;margin:0 0 8px;}
+  p.step-sub{text-align:center;color:var(--gray);font-size:14px;margin:0 0 22px;line-height:1.5;}
+  .btn{display:block;width:100%;padding:14px 16px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;box-sizing:border-box;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:var(--navy-deep);}
+  .btn-secondary{background:transparent;color:var(--gray);font-weight:500;margin-top:10px;font-size:13px;}
+  textarea{width:100%;min-height:110px;border:1px solid #dcdcdc;border-radius:10px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;margin-bottom:14px;}
+  textarea:focus{outline:2px solid var(--navy);outline-offset:1px;}
+  input[type="text"], input[type="tel"]{width:100%;border:1px solid #dcdcdc;border-radius:10px;padding:12px 14px;font-size:14px;font-family:inherit;margin-bottom:14px;}
+  input:focus{outline:2px solid var(--navy);outline-offset:1px;}
+  label.field-label{font-size:12px;color:var(--gray);font-weight:600;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
+
+  /* ============ LONG-SCROLL THANK-YOU PAGE (5-star path) ============ */
+  #longpage{display:none;}
+  #longpage.active{display:block;}
+
+  .lp-hero{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);
+    color:#fff;
+    padding:70px 24px 90px;
+    text-align:center;
+  }
+  .lp-hero .brand{
+    font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px;
+  }
+  .lp-hero h1{
+    font-size:clamp(28px,5vw,40px);
+    line-height:1.25;
+    margin:0 0 16px;
+    max-width:640px;
+    margin-left:auto;margin-right:auto;
+  }
+  .lp-hero p{
+    color:#c9d4e0;
+    font-size:16px;
+    max-width:480px;
+    margin:0 auto;
+    line-height:1.6;
+  }
+
+  .lp-section{
+    max-width:640px;
+    margin:0 auto;
+    padding:64px 24px;
+  }
+  .lp-section.alt{background:#eef1f5;}
+  .lp-section h2{
+    font-size:22px;
+    margin:0 0 12px;
+  }
+  .lp-section p{
+    color:var(--gray);
+    font-size:15px;
+    line-height:1.7;
+    margin:0 0 14px;
+  }
+  .lp-stat-row{
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+    margin-top:28px;
+  }
+  .lp-stat{flex:1;min-width:120px;}
+  .lp-stat .num{font-size:28px;font-weight:700;color:var(--navy);}
+  .lp-stat .lbl{font-size:13px;color:var(--gray);margin-top:2px;}
+
+  .lp-testimonial{
+    background:#fff;
+    border-left:3px solid var(--gold);
+    border-radius:8px;
+    padding:22px 24px;
+    margin-bottom:16px;
+    box-shadow:0 2px 10px rgba(15,42,74,0.05);
+  }
+  .lp-testimonial p{color:var(--ink);font-size:14.5px;margin:0 0 10px;font-style:italic;}
+  .lp-testimonial .who{color:var(--gray);font-size:12.5px;font-style:normal;}
+
+  .lp-badges{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-top:24px;
+  }
+  .lp-badge{
+    background:#fff;
+    border:1px solid #e2e6ea;
+    border-radius:10px;
+    padding:14px 18px;
+    font-size:13px;
+    color:var(--navy);
+    font-weight:600;
+    flex:1;
+    min-width:150px;
+    text-align:center;
+  }
+
+  .lp-cta-section{
+    text-align:center;
+    padding:70px 24px 90px;
+    max-width:480px;
+    margin:0 auto;
+  }
+  .lp-cta-section .icon-circle{width:72px;height:72px;margin-bottom:22px;}
+  .lp-cta-section .icon-circle svg{width:34px;height:34px;}
+  .lp-cta-section h2{font-size:24px;margin:0 0 10px;}
+  .lp-cta-section p{color:var(--gray);font-size:15px;margin:0 0 28px;line-height:1.6;}
+  .lp-cta-btn{
+    display:inline-block;
+    background:var(--navy);
+    color:#fff;
+    padding:16px 36px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:700;
+    text-decoration:none;
+  }
+  .lp-cta-btn:hover{background:var(--navy-deep);}
+
+  .footer-note{text-align:center;font-size:11px;color:#a3a9b3;margin-top:18px;line-height:1.5;padding-bottom:30px;}
+</style>
+</head>
+<body>
+
+<!-- ===================== GATE ===================== -->
+<div id="gate">
+  <div class="card">
+    <div class="header">
+      <div class="brand">First Call Public Adjusters</div>
+      <h1 id="headerText">How was your experience with us?</h1>
+    </div>
+
+    <div class="body">
+
+      <!-- STEP 1: Star rating -->
+      <div class="step active" id="step-rate">
+        <p class="lead">Tap a star to rate your experience.</p>
+        <div class="stars" id="starRow"></div>
+        <div class="star-label" id="starLabel">&nbsp;</div>
+      </div>
+
+      <!-- STEP 2: less than 5 star -> private feedback -->
+      <div class="step" id="step-feedback">
+        <div class="icon-circle navy">
+          <svg viewBox="0 0 24 24"><path fill="#0f2a4a" d="M12 2C6.48 2 2 5.94 2 10.75c0 2.73 1.46 5.17 3.75 6.75L5 22l4.44-2.37c.83.16 1.69.25 2.56.25 5.52 0 10-3.94 10-8.88S17.52 2 12 2z"/></svg>
+        </div>
+        <h2 class="step-title">Thanks for letting us know</h2>
+        <p class="step-sub">Sorry we missed the mark. Tell us what happened &mdash; this goes straight to the owner, not a public review page.</p>
+
+        <label class="field-label" for="fbName">Name (optional)</label>
+        <input type="text" id="fbName" placeholder="Your name">
+
+        <label class="field-label" for="fbContact">Best way to reach you (optional)</label>
+        <input type="tel" id="fbContact" placeholder="Phone or email">
+
+        <label class="field-label" for="fbText">What happened?</label>
+        <textarea id="fbText" placeholder="Tell us more..."></textarea>
+
+        <a href="#" class="btn btn-primary" id="sendFeedbackBtn">Send to the owner</a>
+        <button class="btn btn-secondary" onclick="goToGateStep('rate')">Go back</button>
+      </div>
+
+      <!-- STEP 3: Thank you after feedback sent -->
+      <div class="step" id="step-thanks">
+        <div class="icon-circle navy">
+          <svg viewBox="0 0 24 24"><path fill="#0f2a4a" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+        </div>
+        <h2 class="step-title">Got it &mdash; thank you</h2>
+        <p class="step-sub">Ryan personally reviews every submission and will follow up with you directly.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LONG-SCROLL PAGE (5-star path) ===================== -->
+<div id="longpage">
+
+  <div class="lp-hero">
+    <div class="brand">First Call Public Adjusters</div>
+    <h1>Thank you for trusting us with your claim.</h1>
+    <p>We're glad we could help get your property back to where it needs to be. Here's a little about who we are and why homeowners across North Texas call us first.</p>
+  </div>
+
+  <div class="lp-section">
+    <h2>Since 2016, fighting for policyholders</h2>
+    <p>First Call Public Adjusters was built on one idea: insurance companies have adjusters working for them, so homeowners should have someone working just as hard for them. We're licensed public adjusters representing you &mdash; never the insurance carrier.</p>
+    <div class="lp-stat-row">
+      <div class="lp-stat"><div class="num">1,200+</div><div class="lbl">claims resolved</div></div>
+      <div class="lp-stat"><div class="num">$0</div><div class="lbl">upfront cost to you</div></div>
+      <div class="lp-stat"><div class="num">TX / OK / CO</div><div class="lbl">licensed &amp; active</div></div>
+    </div>
+  </div>
+
+  <div class="lp-section alt">
+    <h2>What homeowners tell us</h2>
+    <div class="lp-testimonial">
+      <p>"They dealt with the insurance company and kept me updated the whole way through. Took a huge weight off my shoulders."</p>
+      <div class="who">&mdash; North Texas homeowner</div>
+    </div>
+    <div class="lp-testimonial">
+      <p>"After months of getting nowhere with our carrier, they got our claim approved and handled every bit of the back and forth."</p>
+      <div class="who">&mdash; Rockwall, TX</div>
+    </div>
+    <div class="lp-testimonial">
+      <p>"Professional, on time, and didn't stop until the insurance company paid what they were supposed to."</p>
+      <div class="who">&mdash; Southlake, TX</div>
+    </div>
+  </div>
+
+  <div class="lp-section">
+    <h2>How we work</h2>
+    <p>We inspect the property, document every bit of covered damage &mdash; often more than what's visible on the surface &mdash; build a professional claim file, and negotiate directly with your carrier so you don't have to.</p>
+    <div class="lp-badges">
+      <div class="lp-badge">Haag Certified<br>Inspector</div>
+      <div class="lp-badge">Licensed Public<br>Adjuster #1921679</div>
+      <div class="lp-badge">No Fee Unless<br>You Get Paid</div>
+    </div>
+  </div>
+
+  <div class="lp-cta-section">
+    <div class="icon-circle navy">
+      <svg viewBox="0 0 24 24"><path fill="#0f2a4a" d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.27 5.8 21 7 14.14 2 9.27l7.1-1.01z"/></svg>
+    </div>
+    <h2>One more thing</h2>
+    <p>If we earned it, a quick Google review helps other homeowners find us when they need help most. It takes less than a minute.</p>
+    <a href="GOOGLE_REVIEW_LINK_HERE" target="_blank" rel="noopener" id="googleBtn" class="lp-cta-btn">Leave a Google review</a>
+  </div>
+
+  <div class="footer-note">First Call Public Adjusters &middot; Texas License #1921679 &middot; Licensed in TX, OK, CO</div>
+
+</div>
+
+<script>
+  // ===== CONFIGURE THESE TWO VALUES =====
+  const GOOGLE_REVIEW_LINK = "https://g.page/r/CeY0KI3OuDzpEBM/review";
+  const OWNER_EMAIL = "firstcallpublicadjusters@gmail.com";
+  // =======================================
+
+  document.getElementById('googleBtn').href = GOOGLE_REVIEW_LINK;
+
+  const starRow = document.getElementById('starRow');
+  const starLabel = document.getElementById('starLabel');
+  const labels = ["", "Poor", "Below average", "Okay", "Good", "Excellent"];
+
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'star-btn';
+    btn.setAttribute('aria-label', i + ' star' + (i > 1 ? 's' : ''));
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.27 5.8 21 7 14.14 2 9.27l7.1-1.01z"/></svg>';
+    btn.dataset.value = i;
+    btn.addEventListener('mouseenter', () => paintStars(i));
+    btn.addEventListener('mouseleave', () => paintStars(0));
+    btn.addEventListener('click', () => selectRating(i));
+    starRow.appendChild(btn);
+  }
+
+  function paintStars(count){
+    document.querySelectorAll('.star-btn').forEach(b => {
+      b.classList.toggle('filled', parseInt(b.dataset.value) <= count);
+    });
+    starLabel.textContent = labels[count] || '\u00A0';
+  }
+
+  function selectRating(value){
+    paintStars(value);
+    setTimeout(() => {
+      if (value === 5) {
+        window.location.href = GOOGLE_REVIEW_LINK;
+      } else {
+        goToGateStep('feedback');
+      }
+    }, 200);
+  }
+
+  function goToGateStep(stepName){
+    document.querySelectorAll('#gate .step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + stepName).classList.add('active');
+  }
+
+  function showLongPage(){
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('longpage').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('sendFeedbackBtn').addEventListener('click', function(e){
+    e.preventDefault();
+    const name = document.getElementById('fbName').value.trim();
+    const contact = document.getElementById('fbContact').value.trim();
+    const text = document.getElementById('fbText').value.trim();
+
+    if (!text) {
+      document.getElementById('fbText').focus();
+      return;
+    }
+
+    const subject = encodeURIComponent('Customer feedback (' + (name || 'anonymous') + ')');
+    const body = encodeURIComponent(
+      'Name: ' + (name || 'Not provided') + '\n' +
+      'Contact: ' + (contact || 'Not provided') + '\n\n' +
+      'Feedback:\n' + text
+    );
+    window.location.href = 'mailto:' + OWNER_EMAIL + '?subject=' + subject + '&body=' + body;
+
+    setTimeout(() => goToGateStep('thanks'), 400);
+  });
+</script>
+
+</body>
+</html>
